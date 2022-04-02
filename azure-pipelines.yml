@@ -6,7 +6,7 @@ trigger:
 - main
 
 pool:
-  name: Hosted Ubuntu 1604
+  vmImage: ubuntu-Latest
 
 steps:
 - task: UsePythonVersion@0
