@@ -35,6 +35,20 @@ steps:
 - script: git checkout main
   displayName: 'Get Latest Branch'
 
+- script: |
+    python -m pytest --junit-xml=$(Build.Repository.LocalPath)/logs/TEST-LOCAL.xml
+    $(Build.Repository.LocalPath)/cicd-scripts/test*.py || true
+
+  displayName: 'Run Python Unit Tests for library code'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '**/TEST-*.xml'
+    failTaskOnFailedTests: true
+    publishRunAttachments: true
+
+
+
 
 - script: |
     cd $(Build.Repository.LocalPath)/package
