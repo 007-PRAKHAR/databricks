@@ -1,12 +1,16 @@
-# Azure Databricks Build Pipeline
-# azure-pipelines.yml
-#hello
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
 
 trigger:
-- main
+- release
 
 pool:
-  vmImage: ubuntu-Latest
+  vmImage: ubuntu-latest
+
+# Azure Databricks Build Pipeline
+# azure-pipelines.yml
 
 steps:
 - task: UsePythonVersion@0
@@ -32,12 +36,9 @@ steps:
   persistCredentials: true
   clean: true
 
-- script: git checkout main
-  displayName: 'Get Latest Branch'
 
 - script: |
-    python -m pytest --junit-xml=$(Build.Repository.LocalPath)/logs/TEST-LOCAL.xml
-    $(Build.Repository.LocalPath)/cicd-scripts/test*.py || true
+    python -m pytest --junit-xml=$(Build.Repository.LocalPath)/logs/TEST-LOCAL.xml $(Build.Repository.LocalPath)/libraries/python/dbxdemo/test*.py || true
 
   displayName: 'Run Python Unit Tests for library code'
 
@@ -46,9 +47,6 @@ steps:
     testResultsFiles: '**/TEST-*.xml'
     failTaskOnFailedTests: true
     publishRunAttachments: true
-
-
-
 
 - script: |
     cd $(Build.Repository.LocalPath)/package
@@ -59,8 +57,8 @@ steps:
 - script: |
     git diff --name-only --diff-filter=AMR HEAD^1 HEAD | xargs -I '{}' cp --parents -r '{}' $(Build.BinariesDirectory)
 
-    mkdir -p $(Build.BinariesDirectory)/package/libs
-    cp $(Build.Repository.LocalPath)/package/dist/*.* $(Build.BinariesDirectory)/package/libs
+    mkdir -p $(Build.BinariesDirectory)/libraries/python/libs
+    cp $(Build.Repository.LocalPath)/libraries/python/dbxdemo/dist/*.* $(Build.BinariesDirectory)/libraries/python/libs
 
     mkdir -p $(Build.BinariesDirectory)/cicd-scripts
     cp $(Build.Repository.LocalPath)/cicd-scripts/*.* $(Build.BinariesDirectory)/cicd-scripts
