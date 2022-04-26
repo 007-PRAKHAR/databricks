@@ -7,7 +7,7 @@ trigger:
 - release
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: ubuntu-20.04
 
 # Azure Databricks Build Pipeline
 # azure-pipelines.yml
